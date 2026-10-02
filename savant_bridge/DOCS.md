@@ -14,7 +14,7 @@ Assistant: every switch, dimmer and fan load becomes an ordinary Home Assistant 
 
 | Option | |
 |---|---|
-| `savant_host` | The Savant host's IP address or name, e.g. `192.168.1.50` |
+| `savant_host` | The IP address that opens your "Savant Smart Lighting" page (`http://<address>/#/tab/devices`), usually the Savant host, e.g. `192.168.1.50`. Just the address, no `http://`. |
 
 Start the add-on and look at its **Log**: it says how many loads it found. The entities
 appear under the MQTT integration, one device per load, in the Savant room.

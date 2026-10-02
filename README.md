@@ -27,13 +27,15 @@ About 10 minutes. You don't need to touch the Savant system or install anything 
 
 ### Step 1: Check that your Savant system will work (1 minute)
 
-1. Find your **Savant host's IP address**. Any of these works:
+1. Find the IP address of your **Savant host**, the machine that serves the Savant lighting web
+   page (on Savant Pro systems, usually the Mac mini). Any of these works:
    - your router's list of connected devices (look for a Mac mini, or a name with "Savant" or "RPM");
    - if you know the host's name, try `http://<name>.local` in a browser.
 2. In a web browser on the same network, open `http://<savant-host-ip>/#/tab/devices`
    (for example `http://192.168.1.50/#/tab/devices`).
 3. **You should see "Savant Smart Lighting"** with a list of your lighting devices.
-   - ✅ You do: this bridge will work. Write the IP address down and carry on.
+   - ✅ You do: this bridge will work. **The IP address in your browser's address bar is the one
+     the bridge needs.** Write it down and carry on.
    - ❌ The page doesn't load: check the IP address. If it's right and there's still no lighting
      page, your system doesn't have the lighting web app this bridge relies on, and it won't work.
 
@@ -68,7 +70,8 @@ Or by hand:
 ### Step 5: Tell it where your Savant host is
 
 1. Open the **Configuration** tab of the add-on.
-2. In **savant_host**, type the IP address from Step 1 (for example `192.168.1.50`).
+2. In **savant_host**, type the IP address that opened the lighting page in Step 1 (for example
+   `192.168.1.50`): just the address, without `http://` or anything after it.
 3. Click **Save**.
 
 ### Step 6: Start it and check the log
