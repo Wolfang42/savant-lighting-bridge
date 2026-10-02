@@ -48,18 +48,7 @@ The bridge hands your Savant devices to Home Assistant through MQTT.
 3. Go to **Settings → Devices & services**. Home Assistant shows **MQTT** as *Discovered*: click
    **Add** / **Configure**, then **Submit**. MQTT is now listed under your integrations.
 
-### Step 3 (recommended): Stop Home Assistant announcing new devices to Alexa or Google
-
-The bridge can add 50+ devices at once. If Home Assistant automatically shares new devices with
-Alexa or Google Assistant, they will all be announced there in one go.
-
-- Go to **Settings → Voice assistants → Expose** tab and open the settings for **Amazon Alexa**
-  and **Google Assistant** (the **⚙** / **⋮** at the top). Turn off **"Expose new entities"**.
-- No Alexa or Google connected to Home Assistant? Skip this step.
-
-You can still share individual Savant devices with them later, one by one.
-
-### Step 4: Add this repository to Home Assistant
+### Step 3: Add this repository to Home Assistant
 
 Click this button (it opens the right page in *your* Home Assistant):
 
@@ -70,19 +59,19 @@ Or by hand:
 2. Click **⋮** (top right) **→ Repositories**.
 3. Paste `https://github.com/Wolfang42/savant-lighting-bridge`, click **Add**, then **Close**.
 
-### Step 5: Install the add-on
+### Step 4: Install the add-on
 
 1. Still in the **Add-on Store**, scroll down to the section **Savant Lighting Bridge**
    (refresh the page if it doesn't show yet).
 2. Click **Savant Lighting Bridge → Install**. It takes a minute or two.
 
-### Step 6: Tell it where your Savant host is
+### Step 5: Tell it where your Savant host is
 
 1. Open the **Configuration** tab of the add-on.
 2. In **savant_host**, type the IP address from Step 1 (for example `192.168.1.50`).
 3. Click **Save**.
 
-### Step 7: Start it and check the log
+### Step 6: Start it and check the log
 
 1. Back on the **Info** tab, switch on **Start on boot** and **Watchdog**, then click **Start**.
 2. Open the **Log** tab. After a few seconds you should see a line like:
@@ -94,7 +83,7 @@ Or by hand:
    That's it: your Savant lights are in Home Assistant. If you see something else, look at
    [Troubleshooting](#troubleshooting).
 
-### Step 8: Find your devices and try one
+### Step 7: Find your devices and try one
 
 - **Settings → Devices & services → MQTT → devices**: each Savant load is a device, named after
   the load ("Kitchen Can Lights") and placed in its Savant room.
@@ -113,13 +102,12 @@ What you get:
 
 | You see | What to do |
 |---|---|
-| *No Savant host set…* | Step 6: enter the IP address in **savant_host**, Save, Start. |
+| *No Savant host set…* | Step 5: enter the IP address in **savant_host**, Save, Start. |
 | *No MQTT broker found…* | Step 2: install and start **Mosquitto broker**, then start the bridge again. |
 | *TimeoutError … trying again* or *ConnectionRefusedError … trying again* | The bridge can't reach the Savant host. Check the IP (Step 1). If the host's IP changes now and then, give it a fixed address in your router. |
 | *0 loads from 0 devices* | The host answered but listed no lighting devices. Check the lighting page from Step 1 shows your devices. |
 | Devices show **Unavailable** | The add-on isn't running: start it (Info tab) and check its log. |
 | A device changes in Savant but not in Home Assistant | Wait up to 2 minutes (every level is re-read regularly). If it never updates, restart the add-on and check the log. |
-| Too many devices announced to Alexa/Google | See Step 3, then remove them there with "Alexa, discover devices" or in the Alexa/Google app. |
 
 Still stuck? Open an issue with the add-on's log (remove anything private first).
 

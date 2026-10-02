@@ -21,8 +21,6 @@ appear under the MQTT integration, one device per load, in the Savant room.
 
 ## Good to know
 
-- **Alexa / Google**: if Home Assistant is set to expose new entities to them, it will
-  expose all of these at once. Consider turning that off before the first start.
 - On/off loads become **switches**, dimmable loads **lights** (brightness 0-100%), fan
   speed controls **fans** (speed as a percentage). Scenes aren't brought over (yet).
 - Turning a light on without a brightness returns it to its last level.
