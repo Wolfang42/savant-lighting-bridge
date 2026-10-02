@@ -79,3 +79,15 @@ async def test_commands_and_states(monkeypatch):
     assert bridge.savant.set == [("740", 40), ("740", 0), ("740", 40), ("d40", 100)]
     assert bridge.savant.read_from == ["01D", "01D", "01D", "035"]  # each confirmed by reading back
     assert (f"savant/{office}/state", "ON") in bridge.mqtt.sent and (f"savant/{office}/level", "40") in bridge.mqtt.sent
+
+
+def test_networks_to_search(monkeypatch):
+    monkeypatch.setenv("SAVANT_NETWORKS", "192.168.1.10/24,10.0.5.2/24,")
+    assert savant.local_networks() == ["192.168.1", "10.0.5"]   # what Home Assistant reports
+    monkeypatch.delenv("SAVANT_NETWORKS")
+    assert all(n.count(".") == 2 for n in savant.local_networks())  # this machine's own network
+
+
+async def test_no_host_means_search(monkeypatch):
+    bridge = savant.Bridge({"savant": {"host": None}})
+    assert bridge.host is None

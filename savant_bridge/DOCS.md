@@ -7,14 +7,13 @@ Assistant: every switch, dimmer and fan load becomes an ordinary Home Assistant 
 
 - The **Mosquitto broker** add-on (or another MQTT broker set up in Home Assistant's MQTT
   integration). This add-on asks Home Assistant for the MQTT login itself.
-- Your Savant host's **IP address**. If your system has the "Savant Smart Lighting" web page
-  (`http://<host>/#/tab/devices`), this add-on will work: it talks to the host the same way.
+- Nothing else: the add-on finds your Savant host on the network by itself.
 
 ## Configuration
 
 | Option | |
 |---|---|
-| `savant_host` | The IP address that opens your "Savant Smart Lighting" page (`http://<address>/#/tab/devices`), usually the Savant host, e.g. `192.168.1.50`. Just the address, no `http://`. |
+| `savant_host` | Optional. Leave it empty and the bridge finds your Savant host on the network. Only needed if the host is on another network: its IP address, e.g. `192.168.20.15` (no `http://`). |
 
 Start the add-on and look at its **Log**: it says how many loads it found. The entities
 appear under the MQTT integration, one device per load, in the Savant room.

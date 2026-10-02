@@ -18,39 +18,27 @@ Assistant through MQTT discovery.
 
 ## Install, step by step
 
-About 10 minutes. You don't need to touch the Savant system or install anything on it.
+About 10 minutes. You don't need to touch the Savant system, install anything on it, or know
+its IP address: the bridge finds it on your network.
 
 **What you need**
 - Home Assistant **OS** or **Supervised** (the kind with an **Add-ons** page, called **Apps** in
   newer versions). Running Home Assistant in Docker? See [Without Home Assistant OS](#without-home-assistant-os).
-- A **Savant Pro** system (the kind with a Mac mini or similar host) on the same network.
+- A **Savant Pro** system (the kind with a Mac mini or similar host) on the same network as
+  Home Assistant.
 
-### Step 1: Check that your Savant system will work (1 minute)
-
-1. Find the IP address of your **Savant host**, the machine that serves the Savant lighting web
-   page (on Savant Pro systems, usually the Mac mini). Any of these works:
-   - your router's list of connected devices (look for a Mac mini, or a name with "Savant" or "RPM");
-   - if you know the host's name, try `http://<name>.local` in a browser.
-2. In a web browser on the same network, open `http://<savant-host-ip>/#/tab/devices`
-   (for example `http://192.168.1.50/#/tab/devices`).
-3. **You should see "Savant Smart Lighting"** with a list of your lighting devices.
-   - ✅ You do: this bridge will work. **The IP address in your browser's address bar is the one
-     the bridge needs.** Write it down and carry on.
-   - ❌ The page doesn't load: check the IP address. If it's right and there's still no lighting
-     page, your system doesn't have the lighting web app this bridge relies on, and it won't work.
-
-### Step 2: Make sure Home Assistant has an MQTT broker
+### Step 1: Make sure Home Assistant has an MQTT broker
 
 The bridge hands your Savant devices to Home Assistant through MQTT.
 
 1. Go to **Settings → Add-ons** (or **Apps**) and look for **Mosquitto broker**.
-   - Already there and running? Go to Step 3.
+   - Already there and running? Go to Step 2.
 2. If not: **Add-on Store** (button at the bottom right) → search **Mosquitto broker** →
    **Install** → **Start**.
 3. Go to **Settings → Devices & services**. Home Assistant shows **MQTT** as *Discovered*: click
    **Add** / **Configure**, then **Submit**. MQTT is now listed under your integrations.
 
-### Step 3: Add this repository to Home Assistant
+### Step 2: Add this repository to Home Assistant
 
 Click this button (it opens the right page in *your* Home Assistant):
 
@@ -61,32 +49,27 @@ Or by hand:
 2. Click **⋮** (top right) **→ Repositories**.
 3. Paste `https://github.com/Wolfang42/savant-lighting-bridge`, click **Add**, then **Close**.
 
-### Step 4: Install the add-on
+### Step 3: Install the add-on
 
 1. Still in the **Add-on Store**, scroll down to the section **Savant Lighting Bridge**
    (refresh the page if it doesn't show yet).
 2. Click **Savant Lighting Bridge → Install**. It takes a minute or two.
 
-### Step 5: Tell it where your Savant host is
+### Step 4: Start it and check the log
 
-1. Open the **Configuration** tab of the add-on.
-2. In **savant_host**, type the IP address that opened the lighting page in Step 1 (for example
-   `192.168.1.50`): just the address, without `http://` or anything after it.
-3. Click **Save**.
-
-### Step 6: Start it and check the log
-
-1. Back on the **Info** tab, switch on **Start on boot** and **Watchdog**, then click **Start**.
-2. Open the **Log** tab. After a few seconds you should see a line like:
+1. On the add-on's **Info** tab, switch on **Start on boot** and **Watchdog**, then click **Start**.
+2. Open the **Log** tab. Within about 10 seconds you should see:
 
    ```
+   [savant] looking for the Savant host on 192.168.1.0/24 ...
+   [savant] found the Savant host at 192.168.1.50
    [savant] 77 loads from 79 devices are in Home Assistant
    ```
 
-   That's it: your Savant lights are in Home Assistant. If you see something else, look at
-   [Troubleshooting](#troubleshooting).
+   (your addresses and numbers will differ). That's it: your Savant lights are in Home
+   Assistant. If it says it found no Savant host, see [If it can't find your Savant host](#if-it-cant-find-your-savant-host).
 
-### Step 7: Find your devices and try one
+### Step 5: Find your devices and try one
 
 - **Settings → Devices & services → MQTT → devices**: each Savant load is a device, named after
   the load ("Kitchen Can Lights") and placed in its Savant room.
@@ -101,14 +84,26 @@ What you get:
 | Dimmer load | **Light** with brightness (0-100%) |
 | Fan speed control | **Fan** with speed as a percentage |
 
+### If it can't find your Savant host
+
+The bridge looks on Home Assistant's own network. If the Savant host is on a different network
+(another VLAN or subnet), tell the bridge where it is:
+
+1. Find the Savant host's IP address, for example in your **router's list of connected devices**
+   (look for a Mac mini, or a name with "Savant" or "RPM").
+2. Optional check: in a web browser, `http://<that-address>/#/tab/devices` should show the
+   **"Savant Smart Lighting"** page with your lighting devices.
+3. In the add-on's **Configuration** tab, enter the address in **savant_host** (just the address,
+   for example `192.168.20.15`, no `http://`), click **Save**, and restart the add-on.
+
 ## Troubleshooting
 
-| You see | What to do |
+| You see in the log | What to do |
 |---|---|
-| *No Savant host set…* | Step 5: enter the IP address in **savant_host**, Save, Start. |
-| *No MQTT broker found…* | Step 2: install and start **Mosquitto broker**, then start the bridge again. |
-| *TimeoutError … trying again* or *ConnectionRefusedError … trying again* | The bridge can't reach the Savant host. Check the IP (Step 1). If the host's IP changes now and then, give it a fixed address in your router. |
-| *0 loads from 0 devices* | The host answered but listed no lighting devices. Check the lighting page from Step 1 shows your devices. |
+| *no Savant host found on the local network* | See [If it can't find your Savant host](#if-it-cant-find-your-savant-host). If it still can't, your system may not have the lighting service this bridge uses (port 8480). |
+| *No MQTT broker found…* | Step 1: install and start **Mosquitto broker**, then start the bridge again. |
+| *TimeoutError … trying again* or *ConnectionRefusedError … trying again* | The bridge can't reach the Savant host. If you entered an address, check it. If the host's address changes now and then, give it a fixed address in your router (or leave **savant_host** empty so the bridge finds it). |
+| *0 loads from 0 devices* | The host answered but listed no lighting devices. |
 | Devices show **Unavailable** | The add-on isn't running: start it (Info tab) and check its log. |
 | A device changes in Savant but not in Home Assistant | Wait up to 2 minutes (every level is re-read regularly). If it never updates, restart the add-on and check the log. |
 
@@ -135,7 +130,7 @@ broker. `savant_bridge/savant.py` needs Python 3.11+:
 
 ```sh
 pip install "websockets>=13" "aiomqtt>=2.3,<3"
-SAVANT_HOST=192.168.1.50 MQTT_HOST=<your broker> MQTT_USER=<user> MQTT_PASSWORD=<password> \
+SAVANT_HOST=<optional, found if left out> MQTT_HOST=<your broker> MQTT_USER=<user> MQTT_PASSWORD=<password> \
     python3 savant_bridge/savant.py
 ```
 

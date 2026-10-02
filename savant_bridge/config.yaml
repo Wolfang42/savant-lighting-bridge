@@ -1,5 +1,5 @@
-name: Savant Bridge
-version: "1.0.1"
+name: Savant Lighting Bridge
+version: "1.1.0"
 slug: savant_bridge
 description: Savant Pro lighting (switches, dimmers, fans) in Home Assistant, over MQTT
 url: https://github.com/Wolfang42/savant-lighting-bridge
@@ -11,7 +11,8 @@ startup: application
 boot: auto
 services:
   - mqtt:need
+hassio_api: true
 options:
   savant_host: ""
 schema:
-  savant_host: str
+  savant_host: str?

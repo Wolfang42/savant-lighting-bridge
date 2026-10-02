@@ -103,6 +103,70 @@ def discovery(load: dict) -> tuple[str, dict]:
     return f"{DISCOVERY}/{load['kind']}/savant_{load['key']}/config", config
 
 
+async def is_savant(address: str, timeout: float = 3) -> bool:
+    """Whether a Savant lighting host answers at this address (port 8480, savant_protocol)."""
+    import websockets
+
+    try:
+        async with websockets.connect(f"ws://{address}:8480/", subprotocols=["savant_protocol"],
+                                      origin=f"http://{address}", compression=None, open_timeout=timeout,
+                                      ping_interval=None) as ws:
+            await ws.send(json.dumps({"messages": [{"protocolVersion": "0.1", "device": {
+                "name": "linux", "version": None, "app": APP, "ip": address, "model": "savant-bridge"}}],
+                "URI": "session/devicePresent"}))
+            while True:
+                reply = parse(await asyncio.wait_for(ws.recv(), timeout))
+                if reply and reply.get("URI") == "session/deviceRecognized":
+                    return True
+    except Exception:
+        return False
+
+
+def local_networks() -> list[str]:
+    """This machine's local network(s) as "a.b.c" prefixes (/24), from SAVANT_NETWORKS or the
+    address it uses to reach the outside."""
+    import socket
+
+    given = [n.strip() for n in os.environ.get("SAVANT_NETWORKS", "").split(",") if n.strip()]
+    found = []
+    for network in given:
+        address = network.split("/")[0]
+        if address.count(".") == 3:
+            found.append(address.rsplit(".", 1)[0])
+    if not found:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+            try:
+                probe.connect(("192.0.2.1", 9))  # no packet is sent; it just picks the local address
+                found.append(probe.getsockname()[0].rsplit(".", 1)[0])
+            except OSError:
+                pass
+    return list(dict.fromkeys(found))
+
+
+async def find_savant_host() -> str | None:
+    """Look for the Savant lighting host on the local network(s)."""
+    for prefix in local_networks():
+        print(f"[savant] looking for the Savant host on {prefix}.0/24 ...", flush=True)
+        candidates = [f"{prefix}.{n}" for n in range(1, 255)]
+        open_ports = await asyncio.gather(*(_port_open(a) for a in candidates))
+        for address in [a for a, ok in zip(candidates, open_ports) if ok]:
+            # the host stays busy for a moment after the scan's knock on its port
+            for attempt in range(4):
+                await asyncio.sleep(2)
+                if await is_savant(address):
+                    return address
+    return None
+
+
+async def _port_open(address: str) -> bool:
+    try:
+        _, writer = await asyncio.wait_for(asyncio.open_connection(address, 8480), 1.5)
+        writer.close()
+        return True
+    except Exception:
+        return False
+
+
 class SavantHost:
     """One WebSocket to the Savant host: requests wait for their reply; pushes go to on_levels."""
 
@@ -171,7 +235,7 @@ class SavantHost:
 class Bridge:
     def __init__(self, config: dict):
         cfg = config.get("savant", {})
-        self.host = cfg.get("host") or "savant-host.local"
+        self.host = cfg.get("host") or None  # None: found on the network
         self.broker = cfg.get("mqtt_host") or "homeassistant.local"
         self.port = int(cfg.get("mqtt_port") or 1883)
         self.loads: dict[str, dict] = {}
@@ -230,6 +294,12 @@ class Bridge:
                 delay = 5
 
     async def _run_once(self, aiomqtt) -> None:
+        if not self.host:
+            self.host = await find_savant_host()
+            if not self.host:
+                raise ConnectionError("no Savant host found on the local network. If it's on another network, "
+                                      "enter its IP address in savant_host")
+            print(f"[savant] found the Savant host at {self.host}", flush=True)
         self.savant = SavantHost(self.host, self.levels_seen)
         await self.savant.connect()
         devices = await self.savant.devices()
@@ -278,6 +348,6 @@ class Bridge:
 
 
 if __name__ == "__main__":  # as a Home Assistant add-on (addons/savant_bridge): settings from run.sh
-    asyncio.run(Bridge({"savant": {"host": os.environ.get("SAVANT_HOST"),
+    asyncio.run(Bridge({"savant": {"host": os.environ.get("SAVANT_HOST") or None,
                                    "mqtt_host": os.environ.get("MQTT_HOST"),
                                    "mqtt_port": os.environ.get("MQTT_PORT")}}).run())

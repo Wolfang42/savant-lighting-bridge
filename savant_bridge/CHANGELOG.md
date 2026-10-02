@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Finds the Savant host on the network by itself: `savant_host` is now optional.
+
 ## 1.0.1
 
 - Clear messages in the log when no Savant host is set or no MQTT broker is found.
