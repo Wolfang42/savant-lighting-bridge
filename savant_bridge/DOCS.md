@@ -26,3 +26,8 @@ appear under the MQTT integration, one device per load, in the Savant room.
 - On/off loads become **switches**, dimmable loads **lights** (brightness 0-100%), fan
   speed controls **fans** (speed as a percentage). Scenes aren't brought over (yet).
 - Turning a light on without a brightness returns it to its last level.
+
+## Step-by-step guide and troubleshooting
+
+The full install guide (with a compatibility check and the meaning of every log message) is
+in the README: https://github.com/Wolfang42/savant-lighting-bridge#install-step-by-step

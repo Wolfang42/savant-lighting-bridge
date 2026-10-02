@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- Clear messages in the log when no Savant host is set or no MQTT broker is found.
+- Step-by-step install guide and troubleshooting in the README.
+
 ## 1.0.0
 
 - First release: every wired load on a Savant Pro lighting system appears in Home
