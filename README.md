@@ -76,3 +76,7 @@ pytest
 
 Savant scenes, keypad button presses as Home Assistant events, and shades/other non-lighting
 devices.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
