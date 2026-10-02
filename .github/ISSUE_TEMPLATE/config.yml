@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or "will this work with my system?"
+    url: https://github.com/Wolfang42/savant-lighting-bridge/discussions/categories/q-a
+    about: Ask in Discussions (Q&A), so others with the same question can find the answer.

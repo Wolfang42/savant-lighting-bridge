@@ -107,7 +107,9 @@ The bridge looks on Home Assistant's own network. If the Savant host is on a dif
 | Devices show **Unavailable** | The add-on isn't running: start it (Info tab) and check its log. |
 | A device changes in Savant but not in Home Assistant | Wait up to 2 minutes (every level is re-read regularly). If it never updates, restart the add-on and check the log. |
 
-Still stuck? Open an issue with the add-on's log (remove anything private first).
+Still stuck? [Report a problem](https://github.com/Wolfang42/savant-lighting-bridge/issues/new/choose)
+(the form asks for the add-on's log; remove anything private first), or ask in
+[Discussions](https://github.com/Wolfang42/savant-lighting-bridge/discussions).
 
 ## Updating
 

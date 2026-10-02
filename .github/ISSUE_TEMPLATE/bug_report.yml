@@ -1,0 +1,47 @@
+name: Something isn't working
+description: The bridge doesn't find your Savant system, a device misbehaves, or something else is wrong.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please fill in what you can; the log is the most useful part.
+        **Before posting the log, remove anything private** (your public IP address, names you don't want to share).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      description: Settings → About (for example 2026.10.1)
+  - type: dropdown
+    id: install
+    attributes:
+      label: How is Home Assistant installed?
+      options:
+        - Home Assistant OS (Green, Yellow, Raspberry Pi, VM, ...)
+        - Supervised
+        - Container / Docker (running the bridge yourself)
+        - Core
+        - Not sure
+  - type: input
+    id: addon_version
+    attributes:
+      label: Bridge version
+      description: On the add-on's Info tab (for example 1.1.0)
+  - type: textarea
+    id: savant
+    attributes:
+      label: Your Savant system
+      description: What you know about it, for example "Savant Pro, Mac mini host, installed 2017". Does `http://<savant-host>/#/tab/devices` show a "Savant Smart Lighting" page?
+  - type: textarea
+    id: log
+    attributes:
+      label: The add-on's log
+      description: The add-on's Log tab, from the start. Pasted as text, not a screenshot.
+      render: text
