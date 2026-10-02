@@ -82,8 +82,8 @@ async def test_commands_and_states(monkeypatch):
 
 
 def test_networks_to_search(monkeypatch):
-    monkeypatch.setenv("SAVANT_NETWORKS", "192.168.1.10/24,10.0.5.2/24,")
-    assert savant.local_networks() == ["192.168.1", "10.0.5"]   # what Home Assistant reports
+    monkeypatch.setenv("SAVANT_NETWORKS", "192.168.50.4/24,10.0.5.2/24,")
+    assert savant.local_networks() == ["192.168.50", "10.0.5"]   # what Home Assistant reports
     monkeypatch.delenv("SAVANT_NETWORKS")
     assert all(n.count(".") == 2 for n in savant.local_networks())  # this machine's own network
 
